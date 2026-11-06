@@ -1,0 +1,6 @@
+.env
+.env.*
+!.env.example
+config/order-email.json
+node_modules/
+npm-debug.log*
