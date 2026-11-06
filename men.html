@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Men's Collection | MO PERFUME</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body data-category="Men">
+
+<header class="navbar">
+    <a href="index.html" class="logo">MO PERFUME<span>.</span></a>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+    </nav>
+
+    <a href="cart.html" class="cart">
+        Cart <span class="cart-count">0</span>
+    </a>
+</header>
+
+<main class="collection-page">
+
+    <div class="collection-banner">
+        <img src="/images/men-banner.jpg.jpeg"
+             alt="MO PERFUME Men's Collection">
+    </div>
+
+    <section class="collection-products">
+
+        <div class="collection-heading">
+            <p>DISCOVER YOUR SIGNATURE SCENT</p>
+            <h1>Men's Collection</h1>
+            <span>Bold. Confident. Unforgettable.</span>
+        </div>
+
+        <input
+            type="search"
+            id="searchInput"
+            class="collection-search"
+            placeholder="Search men's perfumes or brands..."
+        >
+
+        <p id="resultCount">Loading perfumes...</p>
+
+        <div class="product-grid" id="productGrid"></div>
+
+        <button id="loadMore" class="load-more">
+            Load More
+        </button>
+
+    </section>
+</main>
+
+<footer>
+    <p>© 2026 MO PERFUME. All Rights Reserved.</p>
+</footer>
+
+<script src="js/collection.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f7f5f0">
+    <title>Payment status — MO Perfume</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="announcement-bar">A little luxury, made personal <span>—</span> Discover your next signature scent</div>
+    <header class="site-header">
+        <a href="index.html" class="brand-mark" aria-label="MO Perfume home">MO<span>.</span></a>
+        <nav class="main-nav" aria-label="Main navigation">
+            <a href="index.html">Home</a>
+            <a href="shop.html">Shop all</a>
+            <a href="about.html">Our story</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+        <a class="bag-link" href="cart.html" aria-label="Shopping cart">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l1 13H4L5 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg>
+            <span>Cart</span><span class="cart-count">0</span>
+        </a>
+    </header>
+    <main class="editorial-page payment-result">
+        <p class="eyebrow">PAYMENT UPDATE</p>
+        <h1 id="payment-title">Checking your payment.</h1>
+        <p id="payment-message" role="status" aria-live="polite">Please wait while we confirm your transaction securely with Paystack.</p>
+        <p class="payment-reference" id="payment-reference"></p>
+        <a class="button button-dark" href="shop.html">Continue shopping <span aria-hidden="true">→</span></a>
+    </main>
+    <footer class="site-footer">
+        <div class="footer-main">
+            <div class="footer-brand"><a href="index.html" class="brand-mark">MO<span>.</span></a><p>Make room for a little wonder.</p></div>
+            <div class="footer-column"><h2>Explore</h2><a href="shop.html">All fragrances</a><a href="shop.html?category=Women">For her</a><a href="shop.html?category=Men">For him</a><a href="shop.html?category=Unisex">Unisex</a></div>
+            <div class="footer-column"><h2>MO Perfume</h2><a href="about.html">Our story</a><a href="contact.html">Get in touch</a><a href="cart.html">Your cart</a></div>
+            <div class="footer-note"><p class="eyebrow">FIND YOUR SIGNATURE</p><p>Good things linger.<br>Make yours unforgettable.</p></div>
+        </div>
+        <div class="footer-bottom"><span>© 2026 MO Perfume. All rights reserved.</span><span>Made for the moments that stay.</span></div>
+    </footer>
+    <script src="js/payment-return.js" defer></script>
+</body>
+</html>
