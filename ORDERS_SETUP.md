@@ -20,6 +20,24 @@ filesystem is not durable. Configure Mailchimp before collecting real
 newsletter subscriptions; the local JSON fallback is not persistent hosting
 storage.
 
+## Configure Telegram visitor alerts
+
+The site can send one alert per browser-tab session, containing only the page
+path and visit time. It does not send an IP address or customer details. Alerts
+are limited to 60 per minute.
+
+1. Create a bot with Telegram's `@BotFather` and keep its bot token private.
+2. Open the bot and send `/start`.
+3. In your own browser, open
+   `https://api.telegram.org/bot<BOT_TOKEN>/getUpdates` with your token in
+   place of `<BOT_TOKEN>`, then find the `message.chat.id` for your `/start`
+   message. Keep the token out of chat and source control.
+4. In Render, open the service's **Environment** page and add
+   `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`. Save and redeploy.
+
+The variables are listed as secret placeholders in `render.yaml`; their values
+must only be entered in Render's environment settings.
+
 ## Configure SMTP environment
 
 Set these variables in the server's environment (for example, in your hosting

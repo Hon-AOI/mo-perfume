@@ -25,6 +25,7 @@ const app = express();
 const productRoutes = require("./routes/productRoutes");
 const { createOrderRouter } = require("./routes/orderRoutes");
 const { createNewsletterRouter } = require("./routes/newsletterRoutes");
+const { createVisitRouter } = require("./routes/visitRoutes");
 const port = Number(process.env.PORT) || 1969;
 
 // Middleware
@@ -32,6 +33,7 @@ app.use(express.json());
 app.use("/api/products", productRoutes);
 app.use("/api/orders", createOrderRouter());
 app.use("/api/newsletter", createNewsletterRouter());
+app.use("/api/visits", createVisitRouter());
 app.use("/css", express.static(path.join(__dirname, "css")));
 app.use("/js", express.static(path.join(__dirname, "js")));
 app.use("/public/images", express.static(path.join(__dirname, "public", "images")));

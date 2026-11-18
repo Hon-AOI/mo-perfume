@@ -478,6 +478,36 @@ if (newsletterForm) {
     });
 }
 
+function reportWebsiteVisit() {
+    const visitKey = "mo-perfume-visit-alerted";
+    try {
+        if (window.sessionStorage.getItem(visitKey)) return;
+        window.sessionStorage.setItem(visitKey, "pending");
+    } catch (error) {
+        console.warn("Could not mark this browser session for visit alerts:", error);
+        return;
+    }
+
+    fetch("/api/visits", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ page: window.location.pathname })
+    }).then((response) => {
+        if (!response.ok) {
+            throw new Error(`Visit alert request failed with status ${response.status}.`);
+        }
+        window.sessionStorage.setItem(visitKey, "sent");
+    }).catch((error) => {
+        try {
+            window.sessionStorage.removeItem(visitKey);
+        } catch (storageError) {
+            console.warn("Could not reset the visit alert marker:", storageError);
+        }
+        console.warn("Could not send the website visit alert:", error);
+    });
+}
+
 renderCart();
 loadProducts();
 loadFeaturedProducts();
+reportWebsiteVisit();
