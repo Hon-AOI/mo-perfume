@@ -1,8 +1,0 @@
-{
-  "host": "smtp.example.com",
-  "port": 587,
-  "secure": false,
-  "user": "your-smtp-username",
-  "password": "your-smtp-app-password",
-  "from": "MO Perfume <orders@example.com>"
-}

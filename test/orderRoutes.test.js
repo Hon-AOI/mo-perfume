@@ -4,6 +4,9 @@ const express = require("express");
 const { getCatalog } = require("../data/catalog");
 const {
   createOrderRouter,
+  createOrder,
+  formatOrderEmailHtml,
+  loadEmailConfiguration,
   ORDER_EMAIL_TO
 } = require("../routes/orderRoutes");
 
@@ -31,6 +34,44 @@ async function withOrderServer(options, run) {
   }
 }
 
+test("SMTP configuration is read from complete environment settings", () => {
+  const configuration = loadEmailConfiguration({
+    SMTP_HOST: "smtp.example.com",
+    SMTP_PORT: "587",
+    SMTP_SECURE: "false",
+    SMTP_USER: "orders@example.com",
+    SMTP_PASSWORD: "test-password",
+    SMTP_FROM: "MO Perfume <orders@example.com>"
+  });
+
+  assert.deepEqual(configuration, {
+    host: "smtp.example.com",
+    port: 587,
+    secure: false,
+    user: "orders@example.com",
+    password: "test-password",
+    from: "MO Perfume <orders@example.com>"
+  });
+  assert.equal(loadEmailConfiguration({ SMTP_HOST: "smtp.example.com" }), null);
+});
+
+test("designed order email escapes customer HTML", () => {
+  const order = createOrder({
+    fullName: "<script>Test</script>",
+    email: "customer@example.com",
+    phone: "+2348012345678",
+    address: "12 <Example> Street",
+    city: "Lagos",
+    state: "Lagos"
+  }, [{ id: getCatalog()[0].id, quantity: 1 }]);
+
+  const html = formatOrderEmailHtml(order);
+
+  assert.match(html, /&lt;script&gt;Test&lt;\/script&gt;/);
+  assert.match(html, /&lt;Example&gt;/);
+  assert.doesNotMatch(html, /<script>Test<\/script>/);
+});
+
 test("valid order requests are emailed with catalog product details", async () => {
   const product = getCatalog()[0];
   let deliveredOrder;
@@ -54,7 +95,7 @@ test("valid order requests are emailed with catalog product details", async () =
     assert.match(result.orderId, /^MO-/);
   });
 
-  assert.equal(ORDER_EMAIL_TO, "bukunmiisaac1969@gmail.com");
+  assert.equal(ORDER_EMAIL_TO, "buksthegreatt@gmail.com");
   assert.equal(deliveredOrder.order.items[0].name, product.name);
   assert.equal(deliveredOrder.order.items[0].quantity, 2);
   assert.equal(deliveredOrder.order.customer.email, customer.email);

@@ -9,59 +9,48 @@
 
 <body data-category="Unisex">
 
-<header class="navbar">
-    <a href="index.html" class="logo">MO PERFUME<span>.</span></a>
-
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="shop.html">Shop</a>
-        <a href="about.html">About</a>
-        <a href="contact.html">Contact</a>
+<div class="announcement-bar">A little luxury, made personal <span>—</span> Discover your next signature scent</div>
+<header class="site-header">
+    <a href="index.html" class="brand-mark" aria-label="MO Perfume home">MO<span>.</span></a>
+    <nav class="main-nav" aria-label="Main navigation">
+        <a href="index.html">Home</a><a href="shop.html" class="active">Shop all</a><a href="about.html">Our story</a><a href="contact.html">Contact</a>
     </nav>
-
-    <a href="cart.html" class="cart">
-        Cart <span class="cart-count">0</span>
+    <a class="bag-link" href="cart.html" aria-label="Shopping cart">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l1 13H4L5 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg>
+        <span>Cart</span><span class="cart-count">0</span>
     </a>
 </header>
-
-<main class="collection-page">
-
-    <div class="collection-banner">
-        <img src="/images/unisex-banner.jpg.jpeg"
-             alt="MO PERFUME Unisex Collection">
-    </div>
-
-    <section class="collection-products">
-
-        <div class="collection-heading">
-            <p>DISCOVER YOUR SIGNATURE SCENT</p>
-            <h1>Unisex Collection</h1>
-            <span>One fragrance. Every personality.</span>
+<main>
+    <section class="shop-hero">
+        <p class="eyebrow">THE UNISEX EDIT</p>
+        <h1>Made to be worn<br><em>your way.</em></h1>
+        <p>Explore a considered collection of fragrances for everyone.</p>
+    </section>
+    <section class="shop-content" aria-labelledby="collection-title">
+        <div class="collection-toolbar">
+            <div><p class="eyebrow">THE COLLECTION</p><h2 id="collection-title">Unisex fragrances</h2></div>
+            <div class="shop-controls">
+                <label class="search-control"><span class="visually-hidden">Search fragrances</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg><input id="search-input" type="search" placeholder="Search by name, brand, notes..." autocomplete="off"></label>
+                <label class="filter-control"><span class="visually-hidden">Filter by collection</span><select id="category-filter"><option value="">All fragrances</option><option value="Women">For her</option><option value="Men">For him</option><option value="Unisex" selected>Unisex</option></select></label>
+            </div>
         </div>
-
-        <input
-            type="search"
-            id="searchInput"
-            class="collection-search"
-            placeholder="Search unisex perfumes or brands..."
-        >
-
-        <p id="resultCount">Loading perfumes...</p>
-
-        <div class="product-grid" id="productGrid"></div>
-
-        <button id="loadMore" class="load-more">
-            Load More
-        </button>
-
+        <p class="result-count" id="result-count" aria-live="polite"></p>
+        <div class="product-grid shop-product-grid" id="product-container" aria-live="polite" aria-busy="true"><p class="catalog-message">Finding your next favourite...</p></div>
+        <nav class="pagination" id="pagination" aria-label="Product pages"></nav>
     </section>
 </main>
-
-<footer>
-    <p>© 2026 MO PERFUME. All Rights Reserved.</p>
+<footer class="site-footer">
+    <div class="footer-main">
+        <div class="footer-brand"><a href="index.html" class="brand-mark">MO<span>.</span></a><p>Make room for a little wonder.</p></div>
+        <div class="footer-column"><h2>Explore</h2><a href="shop.html">All fragrances</a><a href="women.html">For her</a><a href="men.html">For him</a><a href="unisex.html">Unisex</a></div>
+        <div class="footer-column"><h2>MO Perfume</h2><a href="about.html">Our story</a><a href="contact.html">Get in touch</a><a href="cart.html">Your cart</a></div>
+        <div class="footer-note"><p class="eyebrow">FIND YOUR SIGNATURE</p><p>Good things linger.<br>Make yours unforgettable.</p></div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 MO Perfume. All rights reserved.</span><span>Made for the moments that stay.</span></div>
 </footer>
-
-<script src="js/collection.js"></script>
+<a class="whatsapp-float" href="https://wa.me/2348183018085" target="_blank" rel="noopener noreferrer" aria-label="Chat with MO Perfume on WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.7a8.6 8.6 0 0 1-12.7 7.5L3 20.5l1.4-4.6a8.6 8.6 0 1 1 16.1-4.2Z"/></svg><span>Chat with us</span></a>
+<div class="toast-message" id="site-toast" role="status" aria-live="polite"></div>
+<script src="js/script.js" defer></script>
 
 </body>
 </html>

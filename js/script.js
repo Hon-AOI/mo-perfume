@@ -405,7 +405,8 @@ async function loadOrderStatus() {
 }
 
 if (searchInput && categoryFilter) {
-    const initialCategory = new URLSearchParams(window.location.search).get("category");
+    const initialCategory = document.body.dataset.category ||
+        new URLSearchParams(window.location.search).get("category");
     if (["Men", "Women", "Unisex"].includes(initialCategory)) {
         categoryFilter.value = initialCategory;
     }
@@ -469,11 +470,35 @@ if (checkoutForm) {
 
 const newsletterForm = document.getElementById("newsletter-form");
 if (newsletterForm) {
-    newsletterForm.addEventListener("submit", (event) => {
+    newsletterForm.addEventListener("submit", async (event) => {
         event.preventDefault();
-        document.getElementById("newsletter-status").textContent =
-            "Thanks for your interest. Newsletter sign-up is not connected yet.";
-        newsletterForm.reset();
+        const statusElement = document.getElementById("newsletter-status");
+        const submitButton = newsletterForm.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        statusElement.textContent = "Signing you up...";
+
+        try {
+            const response = await fetch("/api/newsletter", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email: newsletterForm.elements.email.value,
+                    consent: newsletterForm.elements.consent.checked
+                })
+            });
+            const result = await response.json();
+            if (!response.ok) {
+                throw new Error(result.message || "We could not complete your sign-up. Please try again.");
+            }
+
+            statusElement.textContent = result.message;
+            newsletterForm.reset();
+        } catch (error) {
+            console.error("Could not submit newsletter sign-up:", error);
+            statusElement.textContent = error.message;
+        } finally {
+            submitButton.disabled = false;
+        }
     });
 }
 
