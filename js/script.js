@@ -18,9 +18,6 @@ let requestController;
 let searchTimer;
 let toastTimer;
 let cachedCatalog;
-let emailConfigured = false;
-let submittingOrder = false;
-let orderConfirmation = "";
 
 function readCart() {
     try {
@@ -77,7 +74,6 @@ function getCatalogErrorMessage(error) {
 }
 
 function addProductToCart(product) {
-    orderConfirmation = "";
     const id = getProductId(product);
     const existingItem = cart.find((item) => item.id === id);
 
@@ -377,31 +373,13 @@ function updateOrderStatus() {
     const itemCount = cart.reduce((total, item) => total + item.quantity, 0);
     const itemCountElement = document.getElementById("cart-item-count");
     if (itemCountElement) itemCountElement.textContent = String(itemCount);
-    checkoutSubmitButton.disabled = cart.length === 0 || !emailConfigured || submittingOrder;
+    checkoutSubmitButton.disabled = cart.length === 0;
 
-    if (submittingOrder) return;
     if (cart.length === 0) {
-        checkoutStatusElement.textContent = orderConfirmation ||
-            "Add fragrances to your cart to send an order request.";
-    } else if (!emailConfigured) {
-        checkoutStatusElement.textContent = "Order email is not configured yet. Please contact us directly while we set it up.";
+        checkoutStatusElement.textContent = "Add fragrances to your cart to request an order.";
     } else {
-        checkoutStatusElement.textContent = "Your order will be emailed to the shop. We will confirm the total and delivery with you.";
+        checkoutStatusElement.textContent = "Continue in WhatsApp to review and send your order request.";
     }
-}
-
-async function loadOrderStatus() {
-    if (!checkoutForm || !checkoutStatusElement) return;
-    try {
-        const response = await fetch("/api/orders/status");
-        const status = await response.json();
-        if (!response.ok) throw new Error(status.message || "Order availability could not be checked.");
-        emailConfigured = status.configured === true;
-    } catch (error) {
-        console.error("Could not check order availability:", error);
-        emailConfigured = false;
-    }
-    updateOrderStatus();
 }
 
 if (searchInput && categoryFilter) {
@@ -432,39 +410,37 @@ if (clearBagButton) {
 }
 
 if (checkoutForm) {
-    checkoutForm.addEventListener("submit", async (event) => {
+    checkoutForm.addEventListener("submit", (event) => {
         event.preventDefault();
-        if (!emailConfigured || cart.length === 0 || submittingOrder) return;
+        if (cart.length === 0) return;
 
         const formData = new FormData(checkoutForm);
         const customer = Object.fromEntries(formData.entries());
-        submittingOrder = true;
-        updateOrderStatus();
-        checkoutStatusElement.textContent = "Sending your order request...";
-
-        try {
-            const response = await fetch("/api/orders", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    items: cart.map(({ id, quantity }) => ({ id, quantity })),
-                    customer
-                })
-            });
-            const result = await response.json();
-            if (!response.ok) throw new Error(result.message || "Your order could not be sent.");
-            cart = [];
-            orderConfirmation = `Order request ${result.orderId} was emailed to the shop. We will contact you to confirm the details.`;
-            saveCart();
-            checkoutForm.reset();
-            renderCart();
-        } catch (error) {
-            console.error("Could not submit order:", error);
-            checkoutStatusElement.textContent = error.message;
-        } finally {
-            submittingOrder = false;
-            updateOrderStatus();
+        const orderLines = cart.map((item) =>
+            `- ${item.name} (${item.brand || "MO Perfume"}) x ${item.quantity}`
+        );
+        const message = [
+            "MO PERFUME ORDER REQUEST",
+            "",
+            "Fragrances:",
+            ...orderLines,
+            "",
+            "Delivery details:",
+            `Name: ${customer.fullName}`,
+            `Email: ${customer.email}`,
+            `Phone: ${customer.phone}`,
+            `Address: ${customer.address}, ${customer.city}, ${customer.state}`,
+            "",
+            "Please confirm availability, delivery, and payment."
+        ].join("\n");
+        const phone = checkoutForm.dataset.whatsappNumber;
+        if (!/^\d+$/.test(phone || "")) {
+            checkoutStatusElement.textContent = "WhatsApp order contact is unavailable. Please contact us directly.";
+            return;
         }
+
+        const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+        window.location.assign(whatsappUrl);
     });
 }
 
@@ -503,6 +479,5 @@ if (newsletterForm) {
 }
 
 renderCart();
-loadOrderStatus();
 loadProducts();
 loadFeaturedProducts();

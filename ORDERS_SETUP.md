@@ -1,9 +1,9 @@
-# Order email setup
+# Order and email setup
 
-Customers can submit an order request from the cart. The server validates the
-products and delivery details, then sends the request to
-`buksthegreatt@gmail.com`. Orders are requests, not paid transactions; confirm
-availability, delivery, and payment with the customer.
+Customers can submit an order request from the cart using WhatsApp. The cart
+opens a prefilled message with the selected fragrances and delivery details;
+the customer reviews and sends it. Orders are requests, not paid transactions;
+confirm availability, delivery, and payment with the customer.
 
 ## Deploy on Render
 
@@ -12,11 +12,13 @@ GitHub, then in Render choose **New → Blueprint**, connect the repository, and
 apply the Blueprint. Render runs `npm install` and `npm start`, and provides
 the `PORT` environment variable automatically.
 
-Add any email or Mailchimp credentials in the Render service's environment
-settings. The local `.env` file is ignored by Git and is only for local
-development. Free services can spin down when idle, and their local filesystem
-is not durable. Configure Mailchimp before collecting real newsletter
-subscriptions; the local JSON fallback is not persistent hosting storage.
+The cart's WhatsApp checkout needs no SMTP credentials. Render Free blocks
+outbound traffic on SMTP ports 25, 465, and 587, so Gmail SMTP will not work
+from a free web service. The local `.env` file is ignored by Git and is only
+for local development. Free services can spin down when idle, and their local
+filesystem is not durable. Configure Mailchimp before collecting real
+newsletter subscriptions; the local JSON fallback is not persistent hosting
+storage.
 
 ## Configure SMTP environment
 
@@ -37,10 +39,15 @@ commit them. For Gmail, use an app password generated for the account after
 enabling two-step verification. Revoke any app password shared in chat and use
 a newly generated one.
 
+These settings are only needed if you use the optional server-side order email
+endpoint or newsletter welcome email. The cart itself uses WhatsApp checkout.
+If you use SMTP on Render, the provider must support an outbound port that
+Render allows (for example, 2525); Gmail's standard ports are blocked on the
+Free plan.
+
 Start the server with `npm start`, then open `http://localhost:1969/cart.html`.
-The order button becomes available when all SMTP environment variables are set.
-Submit a test order and confirm it arrives in the shop inbox. Check the server
-log and SMTP provider settings if delivery fails.
+For local SMTP testing, submit a test order and confirm it arrives in the shop
+inbox. Check the server log and SMTP provider settings if delivery fails.
 
 ## Configure newsletter sign-up
 
@@ -54,9 +61,11 @@ Set these additional server environment variables:
 - `MAILCHIMP_AUDIENCE_ID`: the audience ID from Mailchimp's Audience settings
 - `MAILCHIMP_SERVER_PREFIX`: the data-center suffix from the API key (for example, `us17`)
 
-The welcome email uses the `SMTP_*` settings above. The `.env.example` file
-includes all required variable names, but is a reference only and is not loaded
-by the app. Never commit API keys or SMTP credentials.
+The welcome email uses the `SMTP_*` settings above when available. Mailchimp
+sends the subscription confirmation independently. The `.env.example` file
+includes the required variable names as a reference; never commit API keys or
+SMTP credentials.
 
 Without Mailchimp credentials, newsletter sign-ups are saved locally in
-`data/newsletter-subscriptions.json` and accepted as long as local storage is writable.
+`data/newsletter-subscriptions.json`. This file is ephemeral on Render Free, so
+use Mailchimp for subscriptions you need to retain.
