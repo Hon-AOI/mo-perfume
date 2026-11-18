@@ -1,44 +1,78 @@
 const fs = require("fs");
 const path = require("path");
 
-function parseDelimited(text, delimiter = "|") {
-  const rows = [];
-  let row = [];
-  let field = "";
+function decodeField(text, start, end) {
+  const raw = text.slice(start, end);
+  if (!raw.includes('"')) return raw;
+
+  const parts = [];
   let insideQuotes = false;
+  let partStart = 0;
+  for (let index = 0; index < raw.length; index += 1) {
+    if (raw[index] !== '"') continue;
+
+    parts.push(raw.slice(partStart, index));
+    if (insideQuotes && raw[index + 1] === '"') {
+      parts.push('"');
+      index += 1;
+    } else {
+      insideQuotes = !insideQuotes;
+    }
+    partStart = index + 1;
+  }
+  parts.push(raw.slice(partStart));
+  return parts.join("");
+}
+
+function parseDelimited(text, delimiter = "|") {
+  const products = [];
+  let headers;
+  let row = [];
+  let fieldStart = 0;
+  let insideQuotes = false;
+
+  const addRow = () => {
+    if (!row.some((value) => value.length > 0)) {
+      row = [];
+      return;
+    }
+    if (!headers) {
+      headers = row.map((header) => header.trim());
+    } else {
+      products.push(createProduct(headers, row, products.length));
+    }
+    row = [];
+  };
 
   for (let index = 0; index < text.length; index += 1) {
     const character = text[index];
 
     if (character === '"') {
       if (insideQuotes && text[index + 1] === '"') {
-        field += '"';
         index += 1;
       } else {
         insideQuotes = !insideQuotes;
       }
     } else if (character === delimiter && !insideQuotes) {
-      row.push(field);
-      field = "";
+      row.push(decodeField(text, fieldStart, index));
+      fieldStart = index + 1;
     } else if ((character === "\n" || character === "\r") && !insideQuotes) {
+      row.push(decodeField(text, fieldStart, index));
+      addRow();
       if (character === "\r" && text[index + 1] === "\n") index += 1;
-      row.push(field);
-      if (row.some((value) => value.length > 0)) rows.push(row);
-      row = [];
-      field = "";
-    } else {
-      field += character;
+      fieldStart = index + 1;
     }
   }
 
-  if (field.length > 0 || row.length > 0) {
-    row.push(field);
-    rows.push(row);
+  if (fieldStart < text.length || row.length > 0) {
+    row.push(decodeField(text, fieldStart, text.length));
+    addRow();
   }
 
-  if (rows.length === 0) return [];
-  const headers = rows.shift().map((header) => header.trim());
-  return rows.map((values, index) => {
+  return products;
+}
+
+function createProduct(headers, values, index) {
     const record = {};
     headers.forEach((header, headerIndex) => {
       record[header] = values[headerIndex] || "";
@@ -66,7 +100,6 @@ function parseDelimited(text, delimiter = "|") {
       priceNGN: Number.isFinite(priceNGN) && priceNGN > 0 ? priceNGN : null,
       ingredients: ingredients.join(", ")
     };
-  });
 }
 
 let catalog;
